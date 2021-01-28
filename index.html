@@ -35,7 +35,6 @@
   </head>
 
   <body>
-    <h3>Optimized Assets (<a href="../original">Unoptimized Version</a>, <a href="../">See the associated article</a>)</h3>
 
     <canvas id="outputCanvas" touch-action="none"></canvas>
 
@@ -53,7 +52,7 @@
       });
 
       // Load the mesh.
-      BABYLON.SceneLoader.LoadAssetContainer("./", "gi_test2.glb", scene, function (gltf) {
+      BABYLON.SceneLoader.LoadAssetContainer("./", "gi_test3.glb", scene, function (gltf) {
         console.log('Material Count: ', gltf.materials.length);
         console.log('Mesh Count: ', gltf.meshes.length);
 
