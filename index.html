@@ -28,6 +28,12 @@
         left: 0;
         touch-action: none;
       }
+      
+      .info{
+        position:absolute;
+        display:block;
+        z-index:1000;
+      }
     </style>
 
     <script src="https://preview.babylonjs.com/babylon.js"></script>
@@ -35,7 +41,7 @@
   </head>
 
   <body>
-    <div id="loadingScreenPercent"></div>
+    <div id="loadingScreenPercent" class="info"></div>
     <canvas id="outputCanvas" touch-action="none"></canvas>
 
     <script type="module">
