@@ -57,27 +57,80 @@
         createGround: false,
       });
 
-      // Load the mesh.
-      BABYLON.SceneLoader.LoadAssetContainer("./", "fgi_1.glb", scene, function (gltf) {
-        console.log('Material Count: ', gltf.materials.length);
-        console.log('Mesh Count: ', gltf.meshes.length);
+      BABYLON.Effect.ShadersStore["customVertexShader"]=                "precision highp float;\r\n"+
 
-        // The original asset is a bit too large, so we'll scale it down here.
-        //gltf.transformNodes[0].scaling.x *= 0.5;
-        //gltf.transformNodes[0].scaling.y *= 0.5;
-        //gltf.transformNodes[0].scaling.z *= 0.5;
+                "// Attributes\r\n"+
+                "attribute vec3 position;\r\n"+
+                "attribute vec2 uv;\r\n"+
 
-        gltf.addAllToScene();
+                "// Uniforms\r\n"+
+                "uniform mat4 worldViewProjection;\r\n"+
 
-        // Set the island ground meshes as teleport-able
-        const floorMeshes = [
-          scene.getMeshByID('Plane.001'),
-          scene.getMeshByID('Plane.003'),
-        ];
+                "// Varying\r\n"+
+                "varying vec2 vUV;\r\n"+
 
-        // Initialize XR support
-        scene.createDefaultXRExperienceAsync({ floorMeshes });
+                "void main(void) {\r\n"+
+                "    gl_Position = worldViewProjection * vec4(position, 1.0);\r\n"+
+
+                "    vUV = uv;\r\n"+
+                "}\r\n";
+
+                BABYLON.Effect.ShadersStore["customFragmentShader"]=                "precision highp float;\r\n"+
+
+                "varying vec2 vUV;\r\n"+
+
+                "uniform sampler2D textureSampler;\r\n"+
+                "const float coef = 0.8;\r\n"+
+                "const vec2 diag = vec2(1,1);\r\n"+
+
+                "void main(void) {\r\n"+
+                "    \r\n"+
+                "    vec2 vN = (vec2(vUV.x-0.5, vUV.y-0.5));\r\n"+
+                "    //vec2 vN = (vec2(vUV.x, vUV.y));\r\n"+
+                "    float len = length(vN);//(dot((vN), diag));\r\n"+
+                "    float intens = (coef-len)/coef   ;\r\n"+
+                "    gl_FragColor = vec4(intens, intens, intens, 1);\r\n"+
+                "}\r\n";
+
+      // Compile
+      var shaderMaterial = new BABYLON.ShaderMaterial("shader", scene, {
+          vertex: "custom",
+          fragment: "custom",
       },
+          {
+              attributes: ["position", "normal", "uv"],
+              uniforms: ["world", "worldView", "worldViewProjection", "view", "projection"]
+          });
+
+      shaderMaterial.setFloat("time", 0);
+      shaderMaterial.setVector3("cameraPosition", BABYLON.Vector3.Zero());
+      shaderMaterial.backFaceCulling = false;
+
+                
+
+      // Load the mesh.
+      BABYLON.SceneLoader.LoadAssetContainer("./", "fgi_1.glb", scene, 
+        
+        //onLoaded
+        function (gltf) {
+          console.log('Material Count: ', gltf.materials.length);
+          console.log('Mesh Count: ', gltf.meshes.length);
+          gltf.addAllToScene();
+          for (var index = 0; index < gltf.meshes.length; index++) {
+            var mesh = gltf.meshes[index];
+            mesh.material = shaderMaterial;
+          }
+
+          // Set the island ground meshes as teleport-able
+          const floorMeshes = [
+            scene.getMeshByID('Plane.001'),
+            scene.getMeshByID('Plane.003'),
+          ];
+
+          // Initialize XR support
+          scene.createDefaultXRExperienceAsync({ floorMeshes });
+        },
+        
       //onProgress
       function (evt) {
         // onProgress
