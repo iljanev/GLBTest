@@ -6,7 +6,7 @@
     <meta name='mobile-web-app-capable' content='yes'>
     <meta name='apple-mobile-web-app-capable' content='yes'>
 
-    <title>Optimized Scene - WebXR Scene Optimization</title>
+    <title>My WebXR Scene with babylon.js</title>
 
     <style>
       html, body, canvas {
@@ -55,22 +55,47 @@
         skyboxSize: 100,
         skyboxColor: BABYLON.Color3.FromHexString("#74b9ff"),
         createGround: false,
-      //});
+      });
 
-      // Load the scene
-      BABYLON.SceneLoader.Load("./", "fgi1.babylon", engine, function (scene) { 
-      
+      // Load the mesh.
+      BABYLON.SceneLoader.LoadAssetContainer("./", "fgi_1.glb", scene, function (gltf) {
+        console.log('Material Count: ', gltf.materials.length);
+        console.log('Mesh Count: ', gltf.meshes.length);
+
+        // The original asset is a bit too large, so we'll scale it down here.
+        //gltf.transformNodes[0].scaling.x *= 0.5;
+        //gltf.transformNodes[0].scaling.y *= 0.5;
+        //gltf.transformNodes[0].scaling.z *= 0.5;
+
+        gltf.addAllToScene();
+
         // Set the island ground meshes as teleport-able
         const floorMeshes = [
           scene.getMeshByID('Plane.001'),
           scene.getMeshByID('Plane.003'),
         ];
-        
+
         // Initialize XR support
         scene.createDefaultXRExperienceAsync({ floorMeshes });
-      });
-      
-     
+      },
+      //onProgress
+      function (evt) {
+        // onProgress
+        var loadedPercent = 0;
+        //console.log("Computable:"+evt.lengthComputable);
+        if (evt.lengthComputable) {
+            console.log("Loaded:"+evt.loaded + " Total:"+evt.total);
+            loadedPercent = (evt.loaded * 100 / evt.total).toFixed();
+        } else {
+            var dlCount = evt.loaded / (1024 * 1024);
+            console.log("Preload:"+evt.loaded);
+            loadedPercent = Math.floor(dlCount * 100.0) / 100.0;
+        }
+        // assuming "loadingScreenPercent" is an existing html element
+        console.log(loadedPercent);
+        document.getElementById("loadingScreenPercent").innerHTML = loadedPercent;
+        },
+      );
 
       engine.runRenderLoop(() => {
         scene.render();
