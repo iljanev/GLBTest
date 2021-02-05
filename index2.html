@@ -58,7 +58,17 @@
       //});
 
       // Load the scene
-      BABYLON.SceneLoader.Load("./", "fgi1.babylon", engine, function (scene) { });
+      BABYLON.SceneLoader.Load("./", "fgi1.babylon", engine, function (scene) { 
+      
+        // Set the island ground meshes as teleport-able
+        const floorMeshes = [
+          scene.getMeshByID('Plane.001'),
+          scene.getMeshByID('Plane.003'),
+        ];
+        
+        // Initialize XR support
+        scene.createDefaultXRExperienceAsync({ floorMeshes });
+      });
       
      
 
