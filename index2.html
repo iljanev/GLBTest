@@ -49,12 +49,12 @@
       const engine = new BABYLON.Engine(canvas);
       const scene = new BABYLON.Scene(engine);
 
-      //scene.createDefaultCameraOrLight(true, true, true);
+      scene.createDefaultCameraOrLight(true, true, true);
 
-      //scene.createDefaultEnvironment({
-      //  skyboxSize: 100,
-      //  skyboxColor: BABYLON.Color3.FromHexString("#74b9ff"),
-      //  createGround: false,
+      scene.createDefaultEnvironment({
+        skyboxSize: 100,
+        skyboxColor: BABYLON.Color3.FromHexString("#74b9ff"),
+        createGround: false,
       //});
 
       // Load the scene
