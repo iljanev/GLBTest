@@ -57,7 +57,7 @@
         createGround: false,
       });
 
-      BABYLON.Effect.ShadersStore["customVertexShader"]=                "precision highp float;\r\n"+
+      BABYLON.Effect.ShadersStore["customVertexShader"]="precision highp float;\r\n"+
 
                 "// Attributes\r\n"+
                 "attribute vec3 position;\r\n"+
@@ -78,18 +78,14 @@
                 BABYLON.Effect.ShadersStore["customFragmentShader"]=                "precision highp float;\r\n"+
 
                 "varying vec2 vUV;\r\n"+
-
-                "uniform sampler2D textureSampler;\r\n"+
-                "const float coef = 1.6;\r\n"+
-                "const vec2 diag = vec2(1,1);\r\n"+
+                "const float coef = 0.7;\r\n"+
+                "const float offs = 0.5;\r\n"+
 
                 "void main(void) {\r\n"+
                 "    \r\n"+
-                "    vec2 vN = (vec2(vUV.x-0.5, vUV.y-0.5));\r\n"+
-                "    //vec2 vN = (vec2(vUV.x, vUV.y));\r\n"+
-                "    float len = length(vN);//(dot((vN), diag));\r\n"+
-                "    float intens = (coef-len)/coef   ;\r\n"+
-                "    gl_FragColor = vec4(intens, intens, intens, 1);\r\n"+
+                "    vec2 vN = (vec2(vUV.x-offs, vUV.y-offs));\r\n"+
+                "    float intens = coef - pow(length(vN),3.0);\r\n"+
+                "    gl_FragColor = vec4(intens+.1, intens+.08, intens, 1);\r\n"+
                 "}\r\n";
 
       // Compile
